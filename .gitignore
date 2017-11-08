@@ -3,7 +3,9 @@
 # compiled output
 /dist
 /tmp
-/out-tsc
+/out
+/packages
+/shrabik-smart-certificate-reader-win32-x64
 
 # dependencies
 /node_modules

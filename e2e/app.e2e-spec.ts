@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('shrabik-smart-cerrtificate-reader App', () => {
+describe('shrabik-smart-certificate-reader App', () => {
   let page: AppPage;
 
   beforeEach(() => {

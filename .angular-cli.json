@@ -1,15 +1,21 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "shrabik-smart-cerrtificate-reader"
+    "name": "shrabik-smart-certificate-reader",
+    "ejected": false
   },
   "apps": [
     {
       "root": "src",
-      "outDir": "dist",
+      "outDir": "bundle",
       "assets": [
         "assets",
-        "favicon.ico"
+        "favicon.ico",
+        {
+          "glob": "**/*",
+          "input": "./electron/",
+          "output": "./"
+        }
       ],
       "index": "index.html",
       "main": "main.ts",
