@@ -19,6 +19,7 @@ import * as firebase from 'firebase';
 export class AppComponent implements OnInit, AfterViewInit {
   card: any;
   pdfAddress: any;
+  pageInPdf: any;
   certificateVerified = false;
   readers: Array<any> = [];
   serialNumber$: BehaviorSubject<string | null>;
@@ -80,6 +81,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (studentObject.length === 1) {
       this.certificateVerified = true;
       this.pdfAddress = studentObject[0].payload.val().certificatePath;
+      this.pageInPdf = studentObject[0].payload.val().pageInPdf;
       const snackBarRef = this.snackBar.open('Certificate Verified', 'OK');
       } else {
         const snackBarRef = this.snackBar.open('Unverified Certificate', 'OK');

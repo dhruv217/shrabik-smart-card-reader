@@ -9,6 +9,6 @@
     <mat-card *ngIf="certificateVerified == true" style="width: 300px; margin-left: 120px; margin-bottom:25px;">
         <h3>Certificate Verified.</h3>
     </mat-card>
-    <pdf-viewer *ngIf="certificateVerified == true" [src]="pdfAddress" [render-text]="true" style="display: block;" [original-size]="false">
+    <pdf-viewer *ngIf="certificateVerified == true" [src]="pdfAddress" [render-text]="true" [page]="pageInPdf" [stick-to-page]="true" style="display: block;" [original-size]="false">
     </pdf-viewer>
 </div>
