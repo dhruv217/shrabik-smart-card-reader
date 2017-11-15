@@ -111,5 +111,8 @@
             "bundle/**/*"
         ]
     },
-    "nativeModules": []
+    "nativeModules": [
+        "nfc-pcsc",
+        "@pokusew/pcsclite"
+    ]
 }

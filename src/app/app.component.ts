@@ -19,7 +19,7 @@ import * as firebase from 'firebase';
 export class AppComponent implements OnInit, AfterViewInit {
   card: any;
   pdfAddress: any;
-  pageInPdf: any;
+  pageInPdf: number;
   certificateVerified = false;
   readers: Array<any> = [];
   serialNumber$: BehaviorSubject<string | null>;
@@ -39,6 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit () {
+    this.getPdfAddressFromDb('SS-10013');
   }
 
   ngAfterViewInit () {
@@ -70,6 +71,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         console.log(`data converted`, payload);
          this.getPdfAddressFromDb(payload);
       });
+      reader.on('error', async error => {
+        console.log('Reader Error Occured :', error);
+      });
     });
   }
 
@@ -81,7 +85,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (studentObject.length === 1) {
       this.certificateVerified = true;
       this.pdfAddress = studentObject[0].payload.val().certificatePath;
-      this.pageInPdf = studentObject[0].payload.val().pageInPdf;
+      this.pageInPdf = Number(studentObject[0].payload.val().pageInPdf);
       const snackBarRef = this.snackBar.open('Certificate Verified', 'OK');
       } else {
         const snackBarRef = this.snackBar.open('Unverified Certificate', 'OK');

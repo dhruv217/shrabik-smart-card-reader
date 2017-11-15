@@ -38,7 +38,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-toolbar color=\"primary\" class=\"mat-elevation-z4\">\n    <span>Smart Certificate Reader</span>\n    <span fxFlex=\"1 1 auto\"></span>\n</mat-toolbar>\n<div width=\"590px\" height=\"700px\" style=\"margin-top: 10px;\">\n    <mat-card *ngIf=\"certificateVerified == false\" style=\"width: 300px; margin-left: 120px\">\n        <h3>Please scan Certificate to verify.</h3>\n    </mat-card>\n    <mat-card *ngIf=\"certificateVerified == true\" style=\"width: 300px; margin-left: 120px; margin-bottom:25px;\">\n        <h3>Certificate Verified.</h3>\n    </mat-card>\n    <pdf-viewer *ngIf=\"certificateVerified == true\" [src]=\"pdfAddress\" [render-text]=\"true\" style=\"display: block;\" [original-size]=\"false\">\n    </pdf-viewer>\n</div>"
+module.exports = "<mat-toolbar color=\"primary\" class=\"mat-elevation-z4\">\n    <span>Smart Certificate Reader</span>\n    <span fxFlex=\"1 1 auto\"></span>\n</mat-toolbar>\n<div width=\"590px\" height=\"700px\" style=\"margin-top: 10px;\">\n    <mat-card *ngIf=\"certificateVerified == false\" style=\"width: 300px; margin-left: 120px\">\n        <h3>Please scan Certificate to verify.</h3>\n    </mat-card>\n    <mat-card *ngIf=\"certificateVerified == true\" style=\"width: 300px; margin-left: 120px; margin-bottom:25px;\">\n        <h3>Certificate Verified.</h3>\n    </mat-card>\n    <pdf-viewer *ngIf=\"certificateVerified == true\" [src]=\"pdfAddress\" [render-text]=\"true\" [page]=\"4\" [show-all]=\"false\" style=\"display: block;\" [original-size]=\"false\">\n    </pdf-viewer>\n</div>"
 
 /***/ }),
 
@@ -50,7 +50,7 @@ module.exports = "<mat-toolbar color=\"primary\" class=\"mat-elevation-z4\">\n  
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__ = __webpack_require__("../../../platform-browser/@angular/platform-browser.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_nfc_pcsc__ = __webpack_require__("../../../../nfc-pcsc/dist/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_nfc_pcsc__ = __webpack_require__("nfc-pcsc");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_nfc_pcsc___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_nfc_pcsc__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_BehaviorSubject__ = __webpack_require__("../../../../rxjs/BehaviorSubject.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_BehaviorSubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_BehaviorSubject__);
@@ -128,6 +128,7 @@ var AppComponent = (function () {
         });
     }
     AppComponent.prototype.ngOnInit = function () {
+        this.getPdfAddressFromDb('SS-10013');
     };
     AppComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -171,6 +172,12 @@ var AppComponent = (function () {
                         }
                     });
                 }); });
+                reader.on('error', function (error) { return __awaiter(_this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        console.log('Reader Error Occured :', error);
+                        return [2 /*return*/];
+                    });
+                }); });
                 return [2 /*return*/];
             });
         }); });
@@ -184,6 +191,7 @@ var AppComponent = (function () {
             if (studentObject.length === 1) {
                 _this.certificateVerified = true;
                 _this.pdfAddress = studentObject[0].payload.val().certificatePath;
+                _this.pageInPdf = Number(studentObject[0].payload.val().pageInPdf);
                 var snackBarRef = _this.snackBar.open('Certificate Verified', 'OK');
             }
             else {
@@ -344,13 +352,6 @@ module.exports = __webpack_require__("../../../../../src/main.ts");
 
 /***/ }),
 
-/***/ "events":
-/***/ (function(module, exports) {
-
-module.exports = require('events');
-
-/***/ }),
-
 /***/ "fs":
 /***/ (function(module, exports) {
 
@@ -369,6 +370,13 @@ module.exports = require('http');
 /***/ (function(module, exports) {
 
 module.exports = require('https');
+
+/***/ }),
+
+/***/ "nfc-pcsc":
+/***/ (function(module, exports) {
+
+module.exports = require('nfc-pcsc');
 
 /***/ }),
 

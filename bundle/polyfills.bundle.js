@@ -5170,6 +5170,7 @@ module.exports = require('crypto');
 /***/ "events":
 /***/ (function(module, exports) {
 
+if(typeof require('events') === 'undefined') {var e = new Error("Cannot find module \"require('events')\""); e.code = 'MODULE_NOT_FOUND'; throw e;}
 module.exports = require('events');
 
 /***/ }),
