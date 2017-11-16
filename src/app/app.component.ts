@@ -39,7 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit () {
-    this.getPdfAddressFromDb('SS-10013');
+    // this.getPdfAddressFromDb('SS-10013');
   }
 
   ngAfterViewInit () {

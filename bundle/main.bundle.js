@@ -38,7 +38,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-toolbar color=\"primary\" class=\"mat-elevation-z4\">\n    <span>Smart Certificate Reader</span>\n    <span fxFlex=\"1 1 auto\"></span>\n</mat-toolbar>\n<div width=\"590px\" height=\"700px\" style=\"margin-top: 10px;\">\n    <mat-card *ngIf=\"certificateVerified == false\" style=\"width: 300px; margin-left: 120px\">\n        <h3>Please scan Certificate to verify.</h3>\n    </mat-card>\n    <mat-card *ngIf=\"certificateVerified == true\" style=\"width: 300px; margin-left: 120px; margin-bottom:25px;\">\n        <h3>Certificate Verified.</h3>\n    </mat-card>\n    <pdf-viewer *ngIf=\"certificateVerified == true\" [src]=\"pdfAddress\" [render-text]=\"true\" [page]=\"4\" [show-all]=\"false\" style=\"display: block;\" [original-size]=\"false\">\n    </pdf-viewer>\n</div>"
+module.exports = "<mat-toolbar color=\"primary\" class=\"mat-elevation-z4\">\n    <span>Smart Certificate Reader</span>\n    <span fxFlex=\"1 1 auto\"></span>\n</mat-toolbar>\n<div width=\"590px\" height=\"700px\" style=\"margin-top: 10px;\">\n    <mat-card *ngIf=\"certificateVerified == false\" style=\"width: 300px; margin-left: 120px\">\n        <h3>Please scan Certificate to verify.</h3>\n    </mat-card>\n    <mat-card *ngIf=\"certificateVerified == true\" style=\"width: 300px; margin-left: 120px; margin-bottom:25px;\">\n        <h3>Certificate Verified.</h3>\n    </mat-card>\n    <pdf-viewer *ngIf=\"certificateVerified == true\" [src]=\"pdfAddress\" [render-text]=\"true\" [(page)]=\"pageInPdf\" [show-all]=\"false\" style=\"display: block;\" [original-size]=\"false\">\n    </pdf-viewer>\n</div>"
 
 /***/ }),
 
