@@ -1,6 +1,9 @@
 <mat-toolbar color="primary" class="mat-elevation-z4">
     <span>Smart Certificate Reader</span>
     <span fxFlex="1 1 auto"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+    </button>
 </mat-toolbar>
 <div width="590px" height="700px" style="margin-top: 10px;">
     <mat-card *ngIf="certificateVerified == false" style="width: 300px; margin-left: 120px">
@@ -12,3 +15,14 @@
     <pdf-viewer *ngIf="certificateVerified == true" [src]="pdfAddress" [render-text]="true" [(page)]="pageInPdf" [show-all]="false" style="display: block;" [original-size]="false">
     </pdf-viewer>
 </div>
+<mat-menu #menu="matMenu" (close)="menuClose()">
+    <div mat-menu-item>
+        <mat-icon>account_balance_wallet</mat-icon>
+        <span>Rs.</span>
+        <span>{{moneyInWallet}}</span>
+    </div>
+    <button mat-menu-item (click)="addMoney()">
+        <mat-icon>add</mat-icon>
+        <span>Add Money</span>
+    </button>
+</mat-menu>

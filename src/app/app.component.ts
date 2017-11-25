@@ -1,13 +1,16 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NFC, TAG_ISO_14443_3, TAG_ISO_14443_4, KEY_TYPE_A, KEY_TYPE_B } from 'nfc-pcsc';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AngularFireDatabase, AngularFireList, AngularFireAction } from 'angularfire2/database';
+import { WalletService } from './wallet.service';
+import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
 
 
+// import * as crypto from 'crypto';
 import * as firebase from 'firebase';
 
 
@@ -16,19 +19,23 @@ import * as firebase from 'firebase';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   card: any;
   pdfAddress: any;
   pageInPdf: number;
   certificateVerified = false;
   readers: Array<any> = [];
   serialNumber$: BehaviorSubject<string | null>;
+  moneyInWallet: number;
   students$: Observable<AngularFireAction<firebase.database.DataSnapshot>[]>;
+  walletSubscription: Subscription;
 
   constructor(
     public fireDb: AngularFireDatabase,
     public snackBar: MatSnackBar,
-    public sanitizer: DomSanitizer
+    public sanitizer: DomSanitizer,
+    private walletSrv: WalletService,
+    private paymentDialog: MatDialog
   ) {
     this.serialNumber$ = new BehaviorSubject(null);
     this.students$ = this.serialNumber$.switchMap(serialNumber =>
@@ -36,10 +43,36 @@ export class AppComponent implements OnInit, AfterViewInit {
         serialNumber ? ref.orderByChild('serialNumber').equalTo(serialNumber).limitToFirst(1) : ref
       ).snapshotChanges()
     );
+    this.walletSubscription = walletSrv.money$.subscribe(nextValue => {
+      console.log('money Updated');
+      this.moneyInWallet = Number(nextValue);
+      console.log(this.moneyInWallet);
+    });
   }
 
   ngOnInit () {
     // this.getPdfAddressFromDb('SS-10013');
+    this.moneyInWallet = Number(this.walletSrv.money);
+  }
+
+  addMoney() {
+    console.log('setLocalStoreValue');
+    this.walletSrv.addMoney = 100;
+    this.openDialog();
+  }
+
+  menuClose() {
+    console.log('menu Closed');
+  }
+
+  openDialog(): void {
+    const dialogRef = this.paymentDialog.open(PaymentDialogComponent, {
+      width: '350px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The payment dialog was closed');
+    });
   }
 
   ngAfterViewInit () {
@@ -101,6 +134,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
     return sb.toString();
+  }
+
+  ngOnDestroy() {
+    this.walletSubscription.unsubscribe();
   }
 
 }
