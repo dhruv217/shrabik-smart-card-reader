@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Payment</h2>
+<mat-dialog-content>
+    <form #paymentform="ngForm" (ngSubmit)="onSubmit()">
+        <mat-input-container>
+            <input matInput placeholder="Amount" [(ngModel)]="amount" name="amount">
+        </mat-input-container>
+        <mat-input-container>
+            <input matInput placeholder="First Name" [(ngModel)]="user.firstname" name="name">
+        </mat-input-container>
+        <mat-input-container>
+            <input matInput placeholder="Email" [(ngModel)]="user.email" type="email" name="email">
+        </mat-input-container>
+        <mat-input-container>
+            <input matInput placeholder="Phone Number" [(ngModel)]="user.phone" name="phone">
+        </mat-input-container>
+        <br>
+        <button mat-button type="submit">Pay</button>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close [disabled]="primaryActionDisabled$ | async">OK</button>
+    <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>
