@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
+import { WalletService } from '../wallet.service';
 import sha512 from 'crypto-js/sha512';
+import CryptoJS from 'crypto-js';
 import * as electron from 'electron';
 // const remote = require('electron').remote;
 const BrowserWindow = electron.remote.BrowserWindow;
@@ -35,7 +37,8 @@ export class PaymentDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<PaymentDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    private wallet: WalletService
   ) { }
 
   ngOnInit() {
@@ -58,7 +61,7 @@ export class PaymentDialogComponent implements OnInit {
     console.log(hashSequence);
     const hash = sha512(hashSequence);
     console.log(hash);
-    /* const formData: FormData = new FormData();
+    const formData: FormData = new FormData();
     formData.append('key', this.key);
     formData.append('txnid', transactionId);
     formData.append('amount', this.amount);
@@ -67,34 +70,22 @@ export class PaymentDialogComponent implements OnInit {
     formData.append('hash', hash);
     formData.append('firstname', this.user.firstname);
     formData.append('email', this.user.email);
-    formData.append('phone', this.user.phone); */
-    const stringFormData =
-      'key=' + this.key +
-      '&txnid=' + transactionId +
-      '&amount=' + this.amount +
-      '&productinfo=Wallet Recharge' +
-      '&surl=/' +
-      '&hash=' + '[' + hash.words + ']' +
-      '&firestname=' + this.user.firstname +
-      '&email=' + this.user.email +
-      '&phone=' + this.user.phone ;
-    const paymentWindow = new BrowserWindow({width : 1000, height: 600});
-    paymentWindow.loadURL('https://test.payu.in/_payment', {
-      postData: [{
-        type: 'rawData',
-        bytes: Buffer.from(stringFormData)
-      }],
-      extraHeaders: 'Content-Type: application/x-www-form-urlencoded'
-    });
-    /* const req = this.http.post('https://test.payu.in/_payment', formData, { responseType: 'text', observe: 'response'  })
+    formData.append('phone', this.user.phone);
+    const req = this.http.post('https://test.payu.in/_payment', formData, { responseType: 'text', observe: 'response'  })
     .subscribe(
       res => {
         console.log(res);
+        const paymentWindow = new BrowserWindow({ width: 1200, height: 600 });
+        paymentWindow.loadURL(res.url);
+        paymentWindow.on('close', () => {
+          this.wallet.addMoney = Number(this.amount);
+          this.onNoClick();
+        });
       },
         err => {
           console.log('error occured: ', err);
         }
-      ); */
+      );
   }
 
   makeid() {

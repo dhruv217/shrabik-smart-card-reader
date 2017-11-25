@@ -56,8 +56,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addMoney() {
-    console.log('setLocalStoreValue');
-    this.walletSrv.addMoney = 100;
+    // console.log('setLocalStoreValue');
+    // this.walletSrv.addMoney = 100;
     this.openDialog();
   }
 

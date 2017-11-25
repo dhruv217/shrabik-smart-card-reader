@@ -30,6 +30,7 @@ import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { AppComponent } from './app.component';
 import { WalletService } from './wallet.service';
 import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
+import { NfcService } from './nfc.service';
 
 
 // Define the firebase database configuration keys, get it from your Firebase application console
