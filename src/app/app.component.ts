@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, OnDestroy } from '@angular/core';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NFC, TAG_ISO_14443_3, TAG_ISO_14443_4, KEY_TYPE_A, KEY_TYPE_B } from 'nfc-pcsc';
@@ -35,7 +35,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public snackBar: MatSnackBar,
     public sanitizer: DomSanitizer,
     private walletSrv: WalletService,
-    private paymentDialog: MatDialog
+    private paymentDialog: MatDialog,
+    private zone: NgZone
   ) {
     this.serialNumber$ = new BehaviorSubject(null);
     this.students$ = this.serialNumber$.switchMap(serialNumber =>
@@ -44,15 +45,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       ).snapshotChanges()
     );
     this.walletSubscription = walletSrv.money$.subscribe(nextValue => {
-      console.log('money Updated');
-      this.moneyInWallet = Number(nextValue);
-      console.log(this.moneyInWallet);
+      this.zone.run(() => {
+        console.log('money Updated');
+        this.moneyInWallet = Number(nextValue);
+        console.log(this.moneyInWallet);
+      });
     });
   }
 
   ngOnInit () {
     // this.getPdfAddressFromDb('SS-10013');
-    this.moneyInWallet = Number(this.walletSrv.money);
+    this.zone.run(() => {
+      console.log('app init');
+      this.moneyInWallet = Number(this.walletSrv.money);
+    });
   }
 
   addMoney() {
@@ -62,16 +68,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   menuClose() {
-    console.log('menu Closed');
+    this.zone.run(() => {
+      console.log('menu Closed');
+    });
   }
 
   openDialog(): void {
     const dialogRef = this.paymentDialog.open(PaymentDialogComponent, {
       width: '350px'
     });
-
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The payment dialog was closed');
+      this.zone.run(() => {
+        console.log('The payment dialog was closed');
+      });
     });
   }
 
@@ -114,15 +123,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     serialNumber = this.trimNullChar(serialNumber);
     this.serialNumber$.next(serialNumber);
     this.students$.subscribe(studentObject => {
-      console.log(studentObject);
-      if (studentObject.length === 1) {
-      this.certificateVerified = true;
-      this.pdfAddress = studentObject[0].payload.val().certificatePath;
-      this.pageInPdf = Number(studentObject[0].payload.val().pageInPdf);
-      const snackBarRef = this.snackBar.open('Certificate Verified', 'OK');
-      } else {
-        const snackBarRef = this.snackBar.open('Unverified Certificate', 'OK');
-      }
+      this.zone.run(() => {
+        console.log(studentObject);
+        if (studentObject.length === 1) {
+          this.certificateVerified = true;
+          this.pdfAddress = studentObject[0].payload.val().certificatePath;
+          this.pageInPdf = Number(studentObject[0].payload.val().pageInPdf);
+          const snackBarRef = this.snackBar.open('Certificate Verified', 'OK');
+          this.walletSrv.deductMoney(2);
+        } else {
+          const snackBarRef = this.snackBar.open('Unverified Certificate', 'OK');
+        }
+      });
     });
   }
 

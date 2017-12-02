@@ -25,9 +25,10 @@ export class WalletService {
     localStorage.setItem('money', moneyInWallet.toString());
   }
 
-  deductMoney() {
+  deductMoney(amount: number) {
     let moneyInWallet = Number(localStorage.getItem('money'));
-    moneyInWallet = moneyInWallet - 0.5;
+    moneyInWallet = moneyInWallet - amount;
+    this.moneyValue.next(moneyInWallet);
     localStorage.setItem('money', moneyInWallet.toString());
   }
 

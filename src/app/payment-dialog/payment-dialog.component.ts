@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone, OnChanges, SimpleChanges, Input, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpClient } from '@angular/common/http';
@@ -15,7 +15,8 @@ const BrowserWindow = electron.remote.BrowserWindow;
   templateUrl: './payment-dialog.component.html',
   styleUrls: ['./payment-dialog.component.css']
 })
-export class PaymentDialogComponent implements OnInit {
+
+export class PaymentDialogComponent implements OnInit, OnDestroy  {
 
   amount: string;
   merchantId = '4934580';
@@ -38,14 +39,33 @@ export class PaymentDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<PaymentDialogComponent>,
     private http: HttpClient,
-    private wallet: WalletService
+    private wallet: WalletService,
+    private zone: NgZone
   ) { }
 
   ngOnInit() {
+    this.zone.run(() => {
+      console.log('paymen-dialog init');
+    });
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.zone.run(() => {
+      console.log('onNoClick');
+      this.dialogRef.close();
+    });
+  }
+
+  updateZone() {
+    this.zone.run(() => {
+      console.log('Input Changes');
+    });
+  }
+
+  ngOnDestroy() {
+    this.zone.run(() => {
+      console.log('paymen-dialog onDestroy');
+    });
   }
 
   onSubmit() {
@@ -66,7 +86,8 @@ export class PaymentDialogComponent implements OnInit {
     formData.append('txnid', transactionId);
     formData.append('amount', this.amount);
     formData.append('productinfo', 'Wallet Recharge');
-    formData.append('surl', '/');
+    formData.append('surl', 'https://shrabik-payment.herokuapp.com/success');
+    formData.append('furl', 'https://shrabik-payment.herokuapp.com/failure');
     formData.append('hash', hash);
     formData.append('firstname', this.user.firstname);
     formData.append('email', this.user.email);
@@ -74,12 +95,14 @@ export class PaymentDialogComponent implements OnInit {
     const req = this.http.post('https://test.payu.in/_payment', formData, { responseType: 'text', observe: 'response'  })
     .subscribe(
       res => {
-        console.log(res);
-        const paymentWindow = new BrowserWindow({ width: 1200, height: 600 });
-        paymentWindow.loadURL(res.url);
-        paymentWindow.on('close', () => {
-          this.wallet.addMoney = Number(this.amount);
-          this.onNoClick();
+        this.zone.run(() => {
+          console.log(res);
+          const paymentWindow = new BrowserWindow({ width: 1200, height: 600 });
+          paymentWindow.loadURL(res.url);
+          paymentWindow.on('close', () => {
+            this.wallet.addMoney = Number(this.amount);
+            this.onNoClick();
+          });
         });
       },
         err => {

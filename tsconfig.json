@@ -14,10 +14,6 @@
         "lib": [
             "es2017",
             "dom"
-        ],
-        "awesomeTypescriptLoaderOptions": {
-            "useBabel": true,
-            "useCache": true
-        }
+        ]
     }
 }
